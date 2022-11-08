@@ -3,31 +3,35 @@ const User = db.users;
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
-  if (!req.body.full_name || !req.body.username) {
-    res
-      .status(400)
-      .send({ message: "Fullname and Username can not be empty!" });
-    return;
+  //   if (!req.body.full_name || !req.body.username) {
+  //     res
+  //       .status(400)
+  //       .send({ message: "Fullname and Username can not be empty!" });
+  //     return;
+  //   }
+
+  //   // Create a Tutorial
+  //   const user = new User({
+  //     full_name: req.body.full_name,
+  //     username: req.body.username,
+  //     password: req.body.password,
+  //   });
+
+  //   // Save Tutorial in the database
+  //   user
+  //     .save(user)
+  //     .then((data) => {
+  //       res.send(data);
+  //     })
+  //     .catch((err) => {
+  //       res.status(500).send({
+  //         message: err.message || "Some error occurred while creating the User.",
+  //       });
+  //     });
+  if (!req){
+    
   }
-
-  // Create a Tutorial
-  const user = new User({
-    full_name: req.body.full_name,
-    username: req.body.username,
-    password: req.body.password,
-  });
-
-  // Save Tutorial in the database
-  user
-    .save(user)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the User.",
-      });
-    });
+  res.json(req.body.full_name);
 };
 
 // Retrieve all Tutorials from the database.
