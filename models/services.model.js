@@ -4,6 +4,7 @@ module.exports = (mongoose) => {
       name: String,
       teller: String,
       window: String,
+      office: String,
     },
     { timestamps: true }
   );

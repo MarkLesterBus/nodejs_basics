@@ -1,46 +1,35 @@
 const db = require("../models");
+const bcrypt = require('bcrypt');
 const User = db.users;
 
-// Create and Save a new Tutorial
-exports.create = (req, res) => {
+// Create and Save a new Users
+exports.create = async (req, res) => {
   if (!req.body.full_name || !req.body.username) {
     res
       .status(400)
       .send({ message: "Fullname and Username can not be empty!" });
   } else {
-    const username = req.body.username;
 
-    User.find({ "username": username })
+    const salt = await bcrypt.genSalt(10);
+    const pass = await bcrypt.hash(req.body.password, salt)
+
+    const user = new User({
+      full_name: req.body.full_name,
+      username: req.body.username,
+      password: pass,
+    });
+
+    user.save(user)
       .then((data) => {
-        if (Object.keys(data).length > 0) {
-          res.status(404).send({ message: "Username already exist." });
-          return;
-        } else {
-          // Create a Tutorial
-          const user = new User({
-            full_name: req.body.full_name,
-            username: req.body.username,
-            password: req.body.password,
-          });
-
-          user.save(user)
-            .then((data) => {
-              res.send(data);
-            })
-            .catch((err) => {
-              res.status(500).send({
-                message: err.message || "Some error occurred while creating the User.",
-              });
-            });
-        }
+        res.send(data);
       })
       .catch((err) => {
-        res.sendStatus(500).send({ message: err });
+        res.status(500).send(err.message);
       });
   }
 };
 
-// Retrieve all Tutorials from the database.
+// Retrieve all Users from the database.
 exports.findAll = (req, res) => {
   const full_name = req.query.full_name;
   var condition = full_name ? { full_name: { $regex: new RegExp(full_name), $options: "i" } } : {};
@@ -52,12 +41,12 @@ exports.findAll = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials.",
+          err.message || "Some error occurred while retrieving Users.",
       });
     });
 };
 
-// Find a single Tutorial with an id
+// Find a single Users with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
@@ -72,8 +61,8 @@ exports.findOne = (req, res) => {
     });
 };
 
-// Update a Tutorial by the id in the request
-exports.update = (req, res) => {
+// Update a Users by the id in the request
+exports.update = async (req, res) => {
   if (!req.body) {
     return res.status(400).send({
       message: "Data to update can not be empty!",
@@ -81,6 +70,10 @@ exports.update = (req, res) => {
   }
 
   const id = req.params.id;
+
+  const salt = await bcrypt.genSalt(10);
+  const pass = await bcrypt.hash(req.body.password, salt)
+  req.body.password = pass
 
   User.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then((data) => {
@@ -97,7 +90,7 @@ exports.update = (req, res) => {
     });
 };
 
-// Delete a Tutorial with the specified id in the request
+// Delete a Users with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
 
@@ -120,7 +113,7 @@ exports.delete = (req, res) => {
     });
 };
 
-// Delete all Tutorials from the database.
+// Delete all Userss from the database.
 exports.deleteAll = (req, res) => {
   User.deleteMany({})
     .then((data) => {
@@ -135,5 +128,5 @@ exports.deleteAll = (req, res) => {
     });
 };
 
-// Find all published Tutorials
+// Find all published Users
 // exports.findAllPublished = (req, res) => {};
