@@ -4,9 +4,8 @@ module.exports = (app) => {
   var router = require("express").Router();
 
   // Create a new Tutorial
-  router.post("/", function (req, res) {
-    res.json(req.params.full_name);
-  });
+  router.post("/", users.create);
+
 
   // Retrieve all Tutorials
   router.get("/", users.findAll);

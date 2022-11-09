@@ -4,7 +4,6 @@ const cors = require("cors");
 
 const app = express();
 
-require("./routes/user.route")(app);
 
 const db = require("./models");
 db.mongoose
@@ -31,10 +30,16 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to nodejs-express-mongodb rest api" });
 });
+
+
+
+require("./routes/user.route")(app);
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

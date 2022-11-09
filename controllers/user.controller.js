@@ -3,43 +3,47 @@ const User = db.users;
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
-  //   if (!req.body.full_name || !req.body.username) {
-  //     res
-  //       .status(400)
-  //       .send({ message: "Fullname and Username can not be empty!" });
-  //     return;
-  //   }
+  if (!req.body.full_name || !req.body.username) {
+    res
+      .status(400)
+      .send({ message: "Fullname and Username can not be empty!" });
+  } else {
+    const username = req.body.username;
 
-  //   // Create a Tutorial
-  //   const user = new User({
-  //     full_name: req.body.full_name,
-  //     username: req.body.username,
-  //     password: req.body.password,
-  //   });
+    User.find({ "username": username })
+      .then((data) => {
+        if (Object.keys(data).length > 0) {
+          res.status(404).send({ message: "Username already exist." });
+          return;
+        } else {
+          // Create a Tutorial
+          const user = new User({
+            full_name: req.body.full_name,
+            username: req.body.username,
+            password: req.body.password,
+          });
 
-  //   // Save Tutorial in the database
-  //   user
-  //     .save(user)
-  //     .then((data) => {
-  //       res.send(data);
-  //     })
-  //     .catch((err) => {
-  //       res.status(500).send({
-  //         message: err.message || "Some error occurred while creating the User.",
-  //       });
-  //     });
-  if (!req){
-    
+          user.save(user)
+            .then((data) => {
+              res.send(data);
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: err.message || "Some error occurred while creating the User.",
+              });
+            });
+        }
+      })
+      .catch((err) => {
+        res.sendStatus(500).send({ message: err });
+      });
   }
-  res.json(req.body.full_name);
 };
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
   const full_name = req.query.full_name;
-  var condition = full_name
-    ? { full_name: { $regex: new RegExp(full_name), $options: "i" } }
-    : {};
+  var condition = full_name ? { full_name: { $regex: new RegExp(full_name), $options: "i" } } : {};
 
   User.find(condition)
     .then((data) => {
